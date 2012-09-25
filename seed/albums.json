@@ -1,0 +1,24 @@
+{
+   "_id": "4b21a9b8e222577b0660a97d4b0049f6",
+   "_rev": "3-c965a0c56015d9d479a8cb62a69403ec",
+   "artist": "Sade",
+   "title": "Soldier of Love",
+   "description": "deep and spiritual",
+   "genre": "soul"
+}
+{
+   "_id": "4b21a9b8e222577b0660a97d4b005517",
+   "_rev": "2-f396e489d30298fad91637bd849814e2",
+   "artist": "John Mayer",
+   "title": "Heavier Things",
+   "description": "indie music with a touch of blues",
+   "genre": "alternative rock"
+}
+{
+   "_id": "4b21a9b8e222577b0660a97d4b005d49",
+   "_rev": "1-19ee27ba485932c3e913e71b4d11af9d",
+   "artist": "Phil Collins",
+   "title": "The Best of Phil Collins",
+   "description": "all the hits from the 80s to the 90s",
+   "genre": "alternative rock"
+}
