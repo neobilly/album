@@ -10,15 +10,16 @@
       <link rel="stylesheet" href="style/jquery.mobile-1.1.1.min.css" type="text/css">
   </head>
   <body>
-    <div data-role="page">
+    <div data-role="page" id="albumsview">
           <div data-role="header"><h2>Albums</h2></div>
           <div data-role="content">
-              <ul id="albums" data-role="listview" data-theme="c" data-dividertheme="b" />
+              <ul id="albums" data-role="listview" data-theme="g" data-dividertheme="b" />
           </div>
           <div data-role="footer">Footer</div>
     </div>
-    <div data-role="page" id="albumview">
+    <div data-role="page" id="albumview">  
         <div data-role="header" id="albumheader">
+          <a href="#albumsview" data-role="button" data-inline="true" data-theme="a" data-mini="true">Back</a>
             <h2 class="albumtitle"></h2>
         </div>
         <div data-role="content" id="albumcontent"></div>
@@ -56,8 +57,7 @@
  
       function handleDocumentReady()
       {
-          $("#albumview").bind( "pagebeforeshow", openAlbum ); //we have bound the “pagebeforeshow” event to the openAlbum() method handler within the handleDocumentReader() method. This will invoke openAlbum() prior to transitioning to the albumview page, allowing us to request the document based on the albumId and add elements to the content of the albumview page:
-          refreshAlbums();
+         refreshAlbums();
       }
  
       function refreshAlbums()
@@ -72,6 +72,7 @@
                     var description;
                     var listItem;
                     var genre;
+                    var externalPage;
                     for( i in data.rows )
                     {
                         album = data.rows[i].value;
@@ -79,22 +80,15 @@
                         title = album.title;
                         description = album.description;
                         genre = album.genre;
-                        listItem = $("<li/>", {
-                                            class: "album"
-                                        });
-                        header = "<h2 class=\"artist\">" + artist + "<\/h2>";
-                        albumLink = $("<a/>", {
-                                                href: "#albumview",
-                                                "data-identity": album._id,
-                                                click: function() {
-                                                    albumId = $(this).data("identity");
-                                                }
-                                        });
-                        albumLink.append( header );
-                        listItem.append( albumLink );
-                        listItem.append( "<p class=\"title\">" + title + "<\/p>" );
-                        listItem.append( "<p class=\"description\">" + description + "<\/p>" );
-                        listItem.append( "<p class=\"genre\">" + genre + "<\/p>" );
+                        externalPage = "_show/album/" + album._id; //the href is attributed as an external jQuery Mobile page which is a query to show the associated document with the _id.
+                        listItem = "<li class=\"album\">" +
+                                    "<a href=\"" + externalPage + "\">" +
+                                        "<h2 class=\"artist\">" + artist + "<\/h2>" +
+                                    "<\/a>" +
+                                    "<p class=\"title\">" + title + "<\/p>" +
+                                    "<p class=\"description\">" + description + "<\/p>"+
+                                    "<p class=\"genre\">" + genre + "<\/p>";
+                                    "<\/li>";
                         $("#albums").append( listItem );
                     }
                     $("#albums").listview( "refresh" );
@@ -102,24 +96,6 @@
             });
       }
 
-    function openAlbum()
-      {
-          $("#albumcontent").children().remove();
-            $db.openDoc( albumId,
-                  { success: function( data ) {
-                          var artist = data.artist;
-                          var title = data.title;
-                          var description = data.description;
-                          var genre = data.genre;
-                          var html = "<h2 class=\"artist\">" + artist + "<\/h2>" +
-                                        "<p class=\"title\">" + title + "<\/p>" +
-                                        "<p class=\"description\">" + description + "<\/p>" +
-                                        "<p class=\"genre\">" + genre + "<\/p>";
-                          $("#albumcontent").append( html );
-                          $("#albumheader .albumtitle").text( title );
-                  }
-              });
-      }
       $(document).ready( handleDocumentReady );
   </script>
 
