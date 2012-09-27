@@ -17,7 +17,14 @@
           </div>
           <div data-role="footer">Footer</div>
     </div>
-<!--<div id="account"></div>
+    <div data-role="page" id="albumview">
+        <div data-role="header" id="albumheader">
+            <h2 class="albumtitle"></h2>
+        </div>
+        <div data-role="content" id="albumcontent"></div>
+        <div data-role="footer" />
+    </div>
+   <!--<div id="account"></div>
 
     <h1>Example CouchApp</h1>
 
@@ -30,7 +37,7 @@
       <p>Ideas: You could easily turn this into a photo sharing app, 
           or a grocery list, or a chat room. <a href="https://github.com/couchapp/example">Code for this app is on Github.</a></p>
     </div>
- -->  </body>
+ --></body>
   <script src="/_utils/script/sha1.js"></script>
   <script src="/_utils/script/json2.js"></script>
   <script src="/_utils/script/jquery.js"></script>
@@ -43,10 +50,13 @@
   <script src="vendor/couchapp/jquery.evently.js"></script> 
   <script type="text/javascript" charset="utf-8">
  
-      $db = $.couch.db("albums");
+      var albumId;
+
+      $db = $.couch.db("albums"); //declare an instance of the database
  
       function handleDocumentReady()
       {
+          $("#albumview").bind( "pagebeforeshow", openAlbum ); //we have bound the “pagebeforeshow” event to the openAlbum() method handler within the handleDocumentReader() method. This will invoke openAlbum() prior to transitioning to the albumview page, allowing us to request the document based on the albumId and add elements to the content of the albumview page:
           refreshAlbums();
       }
  
@@ -69,20 +79,48 @@
                         title = album.title;
                         description = album.description;
                         genre = album.genre;
-                        listItem = "<li>" +
-                                    "<h2 class=\"artist\">" + artist + "<\/h2>" +
-                                    "<p class=\"title\">" + title + "<\/p>" +
-                                    "<p class=\"description\">" + description + "<\/p>" +
-                                    "<p class=\"genre\">" + genre + "<\/p>";
+                        listItem = $("<li/>", {
+                                            class: "album"
+                                        });
+                        header = "<h2 class=\"artist\">" + artist + "<\/h2>";
+                        albumLink = $("<a/>", {
+                                                href: "#albumview",
+                                                "data-identity": album._id,
+                                                click: function() {
+                                                    albumId = $(this).data("identity");
+                                                }
+                                        });
+                        albumLink.append( header );
+                        listItem.append( albumLink );
+                        listItem.append( "<p class=\"title\">" + title + "<\/p>" );
+                        listItem.append( "<p class=\"description\">" + description + "<\/p>" );
+                        listItem.append( "<p class=\"genre\">" + genre + "<\/p>" );
                         $("#albums").append( listItem );
                     }
                     $("#albums").listview( "refresh" );
                 }
             });
       }
- 
+
+    function openAlbum()
+      {
+          $("#albumcontent").children().remove();
+            $db.openDoc( albumId,
+                  { success: function( data ) {
+                          var artist = data.artist;
+                          var title = data.title;
+                          var description = data.description;
+                          var genre = data.genre;
+                          var html = "<h2 class=\"artist\">" + artist + "<\/h2>" +
+                                        "<p class=\"title\">" + title + "<\/p>" +
+                                        "<p class=\"description\">" + description + "<\/p>" +
+                                        "<p class=\"genre\">" + genre + "<\/p>";
+                          $("#albumcontent").append( html );
+                          $("#albumheader .albumtitle").text( title );
+                  }
+              });
+      }
       $(document).ready( handleDocumentReady );
- 
   </script>
 
 <!-- templates used by app.js -->
